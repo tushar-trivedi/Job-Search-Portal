@@ -1,0 +1,672 @@
+{
+  "name": "JobSearchPortal",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "Company",
+      "items": [
+        {
+          "type": "http",
+          "name": "Create Company",
+          "seq": 1,
+          "request": {
+            "url": "{{app_url}}/api/companies",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\": \"Tech Corp\",\n  \"email\": \"contact@techcorp.com\",\n  \"password\": \"SecurePass123\",\n  \"location\": \"San Francisco, CA\",\n  \"description\": \"Leading tech company specializing in AI solutions\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Company By Id",
+          "seq": 2,
+          "request": {
+            "url": "{{app_url}}/api/companies/{{id}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Company",
+          "seq": 4,
+          "request": {
+            "url": "{{app_url}}/api/companies/682c5f8e197d2e175540c46b",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Delete Company",
+          "seq": 5,
+          "request": {
+            "url": "{{app_url}}/api/companies/{{id}}",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Company by Email",
+          "seq": 5,
+          "request": {
+            "url": "{{app_url}}/api/companies/email/{{email}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get All Companies",
+          "seq": 3,
+          "request": {
+            "url": "{{app_url}}/api/companies",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Candidate",
+      "items": [
+        {
+          "type": "http",
+          "name": "Create Candidate",
+          "seq": 1,
+          "request": {
+            "url": "{{app_url}}/api/candidates",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john223.doe@example.com\",\n  \"password\": \"CandidatePass789\",\n  \"phone\": \"123-456-7890\",\n  \"resumeLink\": \"https://s3.amazonaws.com/resumes/john_doe.pdf\",\n  \"skills\": [\"Java\", \"Python\", \"SQL\"]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Candidate",
+          "seq": 2,
+          "request": {
+            "url": "{{app_url}}/api/candidates/{{id}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"id\": \"<existing_object_id>\",\n  \"name\": \"John Doe Updated\",\n  \"email\": \"john.doe.updated@example.com\",\n  \"password\": null,\n  \"phone\": \"987-654-3210\",\n  \"resumeLink\": \"https://s3.amazonaws.com/resumes/john_doe_updated.pdf\",\n  \"skills\": [\"Java\", \"Spring Boot\", \"MongoDB\"]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Delete Candidate",
+          "seq": 3,
+          "request": {
+            "url": "{{app_url}}/api/candidates/{{id}}",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Candidate By Id",
+          "seq": 4,
+          "request": {
+            "url": "{{app_url}}/api/candidates/{{id}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Candidate by Email",
+          "seq": 5,
+          "request": {
+            "url": "{{app_url}}/api/candidates/email/{{email}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Search Candidates by Skill",
+          "seq": 6,
+          "request": {
+            "url": "{{app_url}}/api/candidates/search/skill/{{skill}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Job Application",
+      "items": [
+        {
+          "type": "http",
+          "name": "Create JobApplication",
+          "seq": 1,
+          "request": {
+            "url": "{{app_url}}/api/job-applications",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"candidateId\": \"682c7390058c3d055de8674f\",\n  \"jobId\": \"1\",\n  \"qualification\": \"B.Sc. Computer Science\",\n  \"resumeLink\": \"https://s3.amazonaws.com/resumes/john_doe_application.pdf\",\n  \"status\": \"Applied\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Job Application",
+          "seq": 2,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/{{id}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Delete JobApplication",
+          "seq": 3,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/{{id}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get JobApplication By Id",
+          "seq": 4,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/{{id}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get JobApplication By Candidate Id",
+          "seq": 5,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/candidate/{{candidateId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Job Application By Job Id",
+          "seq": 6,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/candidate/{{candidateId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get JobApplication By Status",
+          "seq": 7,
+          "request": {
+            "url": "{{app_url}}/api/job-applications/status/{{status}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Job",
+      "items": [
+        {
+          "type": "http",
+          "name": "Create Job",
+          "seq": 1,
+          "request": {
+            "url": "{{app_url}}/api/jobs",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"position\": \"Software Engineer\",\n  \"companyId\": \"<company_id>\",\n  \"location\": \"San Francisco, CA\",\n  \"experience\": \"2-5 years\",\n  \"description\": \"Develop scalable web applications using Java and Spring Boot\",\n  \"skills\": [\"Java\", \"Spring Boot\", \"MongoDB\"],\n  \"jobType\": \"Full-time\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Job",
+          "seq": 2,
+          "request": {
+            "url": "{{app_url}}/api/jobs/{{id}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"position\": \"Senior Software Engineer\",\n  \"companyId\": \"<company_id>\",\n  \"location\": \"New York, NY\",\n  \"experience\": \"5-8 years\",\n  \"description\": \"Lead development of web applications using Java and Spring Boot\",\n  \"skills\": [\"Java\", \"Spring Boot\", \"AWS\"],\n  \"jobType\": \"Full-time\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Delete Job",
+          "seq": 3,
+          "request": {
+            "url": "{{app_url}}/api/jobs/{{id}}",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Job by ID",
+          "seq": 4,
+          "request": {
+            "url": "{{app_url}}/api/jobs/{{id}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Jobs by Company ID",
+          "seq": 5,
+          "request": {
+            "url": "{{app_url}}/api/jobs/company/{{companyId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Search Jobs by Position",
+          "seq": 6,
+          "request": {
+            "url": "{{app_url}}/api/jobs/search/position/{{position}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Search Jobs by Skill",
+          "seq": 7,
+          "request": {
+            "url": "{{app_url}}/api/jobs/search/skill/{{skill}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "activeEnvironmentUid": "tgJFVgn6CYgeCJRMFQFti",
+  "environments": [
+    {
+      "variables": [
+        {
+          "name": "app_url",
+          "value": "http://localhost:8080",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "id",
+          "value": "682c6e51058c3d055de8674d",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "email",
+          "value": "john223.doe@example.com",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        }
+      ],
+      "name": "Local"
+    }
+  ],
+  "brunoConfig": {
+    "version": "1",
+    "name": "JobSearchPortal",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ]
+  }
+}

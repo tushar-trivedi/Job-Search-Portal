@@ -1,0 +1,9 @@
+body.login-bg {
+  background: linear-gradient(135deg, #ff9d8d, #5f47e6);
+  transition: background 0.5s ease-in-out;
+}
+
+body.signup-bg {
+  background: linear-gradient(135deg, #5f47e6, #ff9d8d);
+  transition: background 0.5s ease-in-out;
+}
