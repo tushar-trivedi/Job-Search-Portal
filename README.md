@@ -1,4 +1,3 @@
-Here's a well-structured and refactored version of your content in **README.md** format for a GitHub project:
 
 ---
 
@@ -105,5 +104,3 @@ spring.mail.password=your_password
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
-
-Let me know if you'd like to add screenshots, badges (build, license), or contribution guidelines!
