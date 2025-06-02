@@ -20,6 +20,8 @@ This project provides a platform with three types of users:
 > ⚠️ **Mail Functionality Notice**:
 > The SMTP credentials used for sending emails **must not be shared**. To enable mail services, update your credentials in the `application.properties` file.
 
+> **Without Setting SMTP few functionality wont work as expected**
+
 ---
 
 ## 🚀 Getting Started
