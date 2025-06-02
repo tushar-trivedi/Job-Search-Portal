@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../../config/api';
@@ -17,6 +17,10 @@ function AdminCandidate() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedCandidateId, setSelectedCandidateId] = useState(null);
+
+  // References for scrolling
+  const candidatesSectionRef = useRef(null);
+  const applicationsSectionRef = useRef(null);
 
   const axiosConfig = {
     headers: {
@@ -66,7 +70,11 @@ function AdminCandidate() {
           return updatedApps;
         });
         setMessage('Candidate and related applications deleted successfully!');
-        setSelectedCandidateId(null); // Reset selection after deletion
+        setSelectedCandidateId(null);
+        // Scroll to candidates section after deletion
+        setTimeout(() => {
+          candidatesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       } catch (error) {
         setMessage('Error deleting candidate: ' + (error.response?.data?.message || error.message));
       } finally {
@@ -88,6 +96,10 @@ function AdminCandidate() {
           return updatedApps;
         });
         setMessage('Application deleted successfully!');
+        // Scroll to applications section after deletion
+        setTimeout(() => {
+          applicationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       } catch (error) {
         setMessage('Error deleting application: ' + (error.response?.data?.message || error.message));
       } finally {
@@ -98,6 +110,18 @@ function AdminCandidate() {
 
   const handleCandidateClick = (candidateId) => {
     setSelectedCandidateId(candidateId);
+    // Scroll to applications section
+    setTimeout(() => {
+      applicationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleBackToCandidates = () => {
+    setSelectedCandidateId(null);
+    // Scroll to candidates section
+    setTimeout(() => {
+      candidatesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const filteredCandidates = candidates.filter((candidate) =>
@@ -108,8 +132,8 @@ function AdminCandidate() {
     <div>
       <AdminHeader />
 
-      {/* Main Section */}
-      <section className="py-5 bg-light">
+      {/* Candidates Section */}
+      <section className="py-5 bg-light" ref={candidatesSectionRef}>
         <div className="container">
           <h2 className="mb-4 text-center text-primary animate__animated animate__fadeInDown">
             Manage Candidates
@@ -195,9 +219,9 @@ function AdminCandidate() {
         </div>
       </section>
 
-      {/* Temporary Applications Page */}
+      {/* Applications Section */}
       {selectedCandidateId && (
-        <section className="py-5 bg-white">
+        <section className="py-5 bg-white" ref={applicationsSectionRef}>
           <div className="container">
             <h3 className="mb-4 text-primary animate__animated animate__fadeInDown">
               Applications by {candidates.find((c) => c.id === selectedCandidateId)?.name}
@@ -241,7 +265,7 @@ function AdminCandidate() {
             </div>
             <button
               className="btn btn-secondary mt-4"
-              onClick={() => setSelectedCandidateId(null)}
+              onClick={handleBackToCandidates}
             >
               Back to Candidates
             </button>

@@ -38,7 +38,7 @@ function AdminHeader() {
               <NavLink to="/adminCandidate" style={navLinkStyles}>Candidates</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin/analysis" style={navLinkStyles}>Analysis</NavLink>
+              <NavLink to="/adminAnalysis" style={navLinkStyles}>Analysis</NavLink>
             </li>
             <li className="nav-item">
               <button className="btn btn-outline-light ms-3" onClick={handleLogout}>Logout</button>

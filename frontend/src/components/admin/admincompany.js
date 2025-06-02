@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../../config/api';
@@ -18,7 +18,12 @@ function AdminCompany() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
-  const [selectedJobId, setSelectedJobId] = useState(null); // New state for selected job
+  const [selectedJobId, setSelectedJobId] = useState(null);
+
+  // References for scrolling
+  const companiesSectionRef = useRef(null);
+  const jobsSectionRef = useRef(null);
+  const applicationsSectionRef = useRef(null);
 
   const axiosConfig = {
     headers: {
@@ -84,6 +89,8 @@ function AdminCompany() {
           return updatedApps;
         });
         setMessage('Company and related data deleted successfully!');
+        setSelectedCompanyId(null);
+        setSelectedJobId(null);
       } catch (error) {
         setMessage('Error deleting company: ' + (error.response?.data?.message || error.message));
       } finally {
@@ -108,7 +115,11 @@ function AdminCompany() {
           return updatedApps;
         });
         setMessage('Job and related applications deleted successfully!');
-        setSelectedJobId(null); // Reset selected job after deletion
+        setSelectedJobId(null);
+        // Scroll to jobs section after deletion
+        setTimeout(() => {
+          jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       } catch (error) {
         setMessage('Error deleting job: ' + (error.response?.data?.message || error.message));
       } finally {
@@ -130,6 +141,10 @@ function AdminCompany() {
           return updatedApps;
         });
         setMessage('Application deleted successfully!');
+        // Scroll to applications section after deletion
+        setTimeout(() => {
+          applicationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       } catch (error) {
         setMessage('Error deleting application: ' + (error.response?.data?.message || error.message));
       } finally {
@@ -140,11 +155,36 @@ function AdminCompany() {
 
   const handleCompanyClick = (companyId) => {
     setSelectedCompanyId(companyId);
-    setSelectedJobId(null); // Reset selected job when switching companies
+    setSelectedJobId(null);
+    // Scroll to jobs section
+    setTimeout(() => {
+      jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleJobClick = (jobId) => {
     setSelectedJobId(jobId);
+    // Scroll to applications section
+    setTimeout(() => {
+      applicationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleBackToCompanies = () => {
+    setSelectedCompanyId(null);
+    setSelectedJobId(null);
+    // Scroll to companies section
+    setTimeout(() => {
+      companiesSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleBackToJobs = () => {
+    setSelectedJobId(null);
+    // Scroll to jobs section
+    setTimeout(() => {
+      jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const filteredCompanies = companies.filter((company) =>
@@ -155,8 +195,8 @@ function AdminCompany() {
     <div>
       <AdminHeader />
 
-      {/* Main Section */}
-      <section className="py-5 bg-light">
+      {/* Companies Section */}
+      <section className="py-5 bg-light" ref={companiesSectionRef}>
         <div className="container">
           <h2 className="mb-4 text-center text-primary animate__animated animate__fadeInDown">
             Manage Companies
@@ -231,9 +271,9 @@ function AdminCompany() {
         </div>
       </section>
 
-      {/* Temporary Job Page */}
+      {/* Jobs Section */}
       {selectedCompanyId && (
-        <section className="py-5 bg-white">
+        <section className="py-5 bg-white" ref={jobsSectionRef}>
           <div className="container">
             <h3 className="mb-4 text-primary animate__animated animate__fadeInDown">
               Jobs by {companies.find((c) => c.id === selectedCompanyId)?.name}
@@ -273,9 +313,9 @@ function AdminCompany() {
               )}
             </div>
 
-            {/* Job Applications Section */}
+            {/* Applications Section */}
             {selectedJobId && (
-              <div className="mt-5">
+              <div className="mt-5" ref={applicationsSectionRef}>
                 <h4 className="mb-4 text-primary animate__animated animate__fadeInDown">
                   Applications for {jobs[selectedCompanyId]?.find((j) => j.id === selectedJobId)?.position}
                 </h4>
@@ -313,7 +353,7 @@ function AdminCompany() {
                 </div>
                 <button
                   className="btn btn-secondary mt-4"
-                  onClick={() => setSelectedJobId(null)}
+                  onClick={handleBackToJobs}
                 >
                   Back to Jobs
                 </button>
@@ -322,10 +362,7 @@ function AdminCompany() {
 
             <button
               className="btn btn-secondary mt-4"
-              onClick={() => {
-                setSelectedCompanyId(null);
-                setSelectedJobId(null);
-              }}
+              onClick={handleBackToCompanies}
             >
               Back to Companies
             </button>

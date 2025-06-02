@@ -13,6 +13,7 @@ import AdminPage from './components/admin/adminDashboard';
 import AddAdminPage from './components/admin/adddmin';
 import AdminCompany from './components/admin/admincompany';
 import AdminCandidate from './components/admin/adminCandidate';
+import AnalysisPage from './components/admin/adminAnalysis';
 
 
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="/addAdmin" element={<AddAdminPage/>}/>
           <Route path="/adminCompany" element={<AdminCompany/>}/>
           <Route path="/adminCandidate" element={<AdminCandidate/>}/>
+          <Route path="/adminAnalysis" element={<AnalysisPage/>}/>
         </Routes>
       </div>
     </>

@@ -1,19 +1,19 @@
 .card:hover {
-    transform: scale(1.02);
-    transition: transform 0.3s ease;
-  }
-  
-  .btn-danger:hover {
-    background-color: #dc3545;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-primary {
-    background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-    border: none;
-  }
-  
-  .btn-primary:hover {
-    background: linear-gradient(90deg, #1e3a8a, #2a69ac);
-    transition: background-color 0.3s ease;
-  }
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #dc3545;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(90deg, #1e3a8a, #2a69ac);
+  transition: background-color 0.3s ease;
+}

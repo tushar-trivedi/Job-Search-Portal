@@ -28,7 +28,7 @@ function Login() {
 
       if (role.toLowerCase() === 'company') {
         localStorage.setItem('companyId', user.id);
-        navigate('/company');
+        navigate('/chome');
       } else if (role.toLowerCase() === 'admin') {
         localStorage.setItem('adminId', user.id);
         navigate('/Admindash')
@@ -42,7 +42,7 @@ function Login() {
           resumeLink: user.resumeLink,
           skills: user.skills,
         }));
-        navigate('/candidate-dashboard');
+        navigate('/candHome');
       }
 
       setMessage('Login successful!');

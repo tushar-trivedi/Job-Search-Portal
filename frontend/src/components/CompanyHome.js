@@ -12,6 +12,8 @@ function CompanyHome() {
 
   const [companyData, setCompanyData] = useState({ name: '', jobIds: [] });
   const [recentJobs, setRecentJobs] = useState([]);
+  const [totalApplications, setTotalApplications] = useState(0);
+  const [acceptedOfferedCount, setAcceptedOfferedCount] = useState(0);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -42,9 +44,26 @@ function CompanyHome() {
   const fetchRecentJobs = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/jobs/company/${companyId}`, axiosConfig);
-      setRecentJobs(response.data.slice(0, 5));
+      const jobs = response.data;
+      // Sort jobs by creation date (assuming a `createdAt` field exists; adjust if different)
+      const sortedJobs = jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setRecentJobs(sortedJobs.slice(0, 5));
+
+      // Fetch applications for all jobs to calculate total applications and Accepted/Offered counts
+      let totalApps = 0;
+      let acceptedOffered = 0;
+
+      for (const job of jobs) {
+        const appsResponse = await axios.get(`${API_BASE_URL}/job-applications/job/${job.id}`, axiosConfig);
+        const applications = appsResponse.data;
+        totalApps += applications.length;
+        acceptedOffered += applications.filter(app => ['Accepted', 'Offered'].includes(app.status)).length;
+      }
+
+      setTotalApplications(totalApps);
+      setAcceptedOfferedCount(acceptedOffered);
     } catch (error) {
-      setMessage('Error fetching jobs: ' + (error.response?.data?.message || error.message));
+      setMessage('Error fetching jobs or applications: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -71,7 +90,7 @@ function CompanyHome() {
       <CompanyHeader />
 
       {/* Hero Section */}
-      <section className="py-5 text-white" style={{ backgroundColor: '#add8e6', /* light blue */  marginTop:'5%'}}>
+      <section className="py-5 text-white" style={{ backgroundColor: '#2f88ec', marginTop: '6%', borderRadius: '0.5%' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
@@ -123,7 +142,6 @@ function CompanyHome() {
 
       {/* Main Dashboard Section */}
       <div className="container py-5">
-
         <h2 className="mb-4 fw-bold">Welcome, {companyData.name || 'Company'}!</h2>
 
         {message && (
@@ -136,8 +154,8 @@ function CompanyHome() {
         <div className="row g-4 mb-4">
           {[
             { label: 'Active Job Postings', count: companyData.jobIds.length, color: 'primary' },
-            { label: 'Applications Received', count: 'N/A', color: 'success' },
-            { label: 'Job Views', count: 'N/A', color: 'warning' }
+            { label: 'Applications Received', count: totalApplications, color: 'success' },
+            { label: 'Applications Accepted/Offered', count: acceptedOfferedCount, color: 'warning' },
           ].map((stat, index) => (
             <div className="col-md-4" key={index}>
               <div className={`card shadow-sm text-center border-${stat.color}`} style={{ borderRadius: '12px' }}>
@@ -164,7 +182,7 @@ function CompanyHome() {
           </div>
         </div>
 
-        {/* Recent Jobs */}
+        {/* Recent Job Postings (Card Format) */}
         <div className="card shadow-sm mb-4">
           <div className="card-header bg-primary text-white">
             <h5 className="mb-0">Recent Job Postings</h5>
@@ -173,34 +191,27 @@ function CompanyHome() {
             {recentJobs.length === 0 ? (
               <p>No jobs posted yet.</p>
             ) : (
-              <div className="table-responsive">
-                <table className="table table-hover align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Position</th>
-                      <th>Location</th>
-                      <th>Job Type</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentJobs.map((job) => (
-                      <tr key={job.id}>
-                        <td>{job.position}</td>
-                        <td>{job.location}</td>
-                        <td>{job.jobType}</td>
-                        <td>
-                          <button className="btn btn-outline-info btn-sm" onClick={() => handleView(job.id)}>
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="row g-4">
+                {recentJobs.map((job) => (
+                  <div key={job.id} className="col-md-6 col-lg-4">
+                    <div className="card shadow-sm h-100 border-0" style={{ borderRadius: '12px' }}>
+                      <div className="card-body">
+                        <h5 className="card-title text-primary">{job.position}</h5>
+                        <p className="text-muted mb-2">Location: {job.location}</p>
+                        <p className="mb-2">Job Type: {job.jobType}</p>
+                        <button
+                          className="btn btn-outline-info btn-sm"
+                          onClick={() => handleView(job.id)}
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-            <a href="/capplications" className="btn btn-link mt-2">View All Jobs</a>
+            <a href="/capplications" className="btn btn-link mt-4">View All Jobs</a>
           </div>
         </div>
 

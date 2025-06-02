@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../../config/api';
 import CandidateHeader from './CandidateHeader';
+import { FaFileAlt } from 'react-icons/fa';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'animate.css'; // For animations
 
 function CandidateHome() {
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ function CandidateHome() {
   const candidateId = localStorage.getItem('candidateId');
 
   const [candidateData, setCandidateData] = useState({ name: '' });
-  const [recentApplications, setRecentApplications] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [jobDetails, setJobDetails] = useState({});
   const [message, setMessage] = useState('');
 
@@ -20,7 +22,7 @@ function CandidateHome() {
       navigate('/login');
     } else {
       fetchCandidateData();
-      fetchRecentApplications();
+      fetchApplications();
     }
   }, [token, candidateId, navigate]);
 
@@ -40,16 +42,15 @@ function CandidateHome() {
     }
   };
 
-  const fetchRecentApplications = async () => {
+  const fetchApplications = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/job-applications/candidate/${candidateId}`, axiosConfig);
-      const apps = response.data.slice(0, 5); // Limit to 5 recent applications
-      setRecentApplications(apps);
+      setApplications(response.data);
 
       // Fetch job details for each application
       const jobMap = {};
       await Promise.all(
-        apps.map(async (app) => {
+        response.data.map(async (app) => {
           if (!jobDetails[app.jobId]) {
             try {
               const res = await axios.get(`${API_BASE_URL}/jobs/${app.jobId}`, axiosConfig);
@@ -60,7 +61,7 @@ function CandidateHome() {
           }
         })
       );
-      setJobDetails(prev => ({ ...prev, ...jobMap }));
+      setJobDetails((prev) => ({ ...prev, ...jobMap }));
     } catch (error) {
       setMessage('Error fetching applications: ' + (error.response?.data?.message || error.message));
     }
@@ -75,7 +76,7 @@ function CandidateHome() {
       // Ensure job details are fetched
       if (!jobDetails[jobId]) {
         const jobRes = await axios.get(`${API_BASE_URL}/jobs/${jobId}`, axiosConfig);
-        setJobDetails(prev => ({ ...prev, [jobId]: jobRes.data }));
+        setJobDetails((prev) => ({ ...prev, [jobId]: jobRes.data }));
       }
 
       const modal = new window.bootstrap.Modal(document.getElementById('viewApplicationModal'));
@@ -93,15 +94,17 @@ function CandidateHome() {
     }
   };
 
-  // Calculate the number of offers received (status: "Offered")
-  const offersReceived = recentApplications.filter(app => app.status === 'Offered').length;
+  // Calculate stats for Quick Stats cards
+  const totalApplications = applications.length;
+  const offersReceived = applications.filter((app) => app.status === 'Offered'|| app.status === 'Accepted').length;
+  const rejectedWithdrawn = applications.filter((app) => app.status === 'Rejected' || app.status === 'Withdrawn').length;
 
   return (
     <div>
       <CandidateHeader />
 
       {/* Hero Section */}
-      <section className="py-5 text-white" style={{ backgroundColor: '#add8e6', marginTop: '5%' }}>
+      <section className="py-5 text-white" style={{ backgroundColor: '#2f88ec' ,marginTop:'6%',borderRadius:'0.5%'}}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
@@ -110,7 +113,12 @@ function CandidateHome() {
               <a href="/candidate-dashboard" className="btn btn-primary btn-lg mt-3">Search Jobs</a>
             </div>
             <div className="col-md-6 text-end d-none d-md-block">
-              <img src="https://cdn-icons-png.flaticon.com/512/2920/2920030.png" alt="Candidate illustration" className="img-fluid" style={{ maxHeight: '300px' }} />
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/2920/2920030.png"
+                alt="Candidate illustration"
+                className="img-fluid"
+                style={{ maxHeight: '300px' }}
+              />
             </div>
           </div>
         </div>
@@ -156,7 +164,10 @@ function CandidateHome() {
         <h2 className="mb-4 fw-bold">Welcome, {candidateData.name || 'Candidate'}!</h2>
 
         {message && (
-          <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'} shadow-sm`} style={{ borderRadius: '8px' }}>
+          <div
+            className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'} shadow-sm`}
+            style={{ borderRadius: '8px' }}
+          >
             {message}
           </div>
         )}
@@ -164,9 +175,9 @@ function CandidateHome() {
         {/* Quick Stats */}
         <div className="row g-4 mb-4">
           {[
-            { label: 'Applications Submitted', count: recentApplications.length, color: 'primary' },
+            { label: 'Applications Submitted', count: totalApplications, color: 'primary' },
             { label: 'Offers Received', count: offersReceived, color: 'success' },
-            { label: 'Profile Views', count: 'N/A', color: 'warning' }
+            { label: 'Applications Rejected/Withdrawn', count: rejectedWithdrawn, color: 'danger' },
           ].map((stat, index) => (
             <div className="col-md-4" key={index}>
               <div className={`card shadow-sm text-center border-${stat.color}`} style={{ borderRadius: '12px' }}>
@@ -186,52 +197,49 @@ function CandidateHome() {
           </div>
           <div className="card-body">
             <div className="d-flex flex-wrap gap-3">
-              <a href="/jobsearch" className="btn btn-success">Search Jobs</a>
-              <a href="/candidate-applications" className="btn btn-primary">View Applications</a>
-              <a href="/candidate-profile" className="btn btn-warning">Edit Profile</a>
+              <a href="/candidate-dashboard" className="btn btn-success">Search Jobs</a>
+              <a href="/candapplications" className="btn btn-primary">View Applications</a>
+              <a href="/candidateProfile" className="btn btn-warning">Edit Profile</a>
             </div>
           </div>
         </div>
 
-        {/* Recent Applications */}
+        {/* All Applications in Card Format */}
         <div className="card shadow-sm mb-4">
           <div className="card-header bg-primary text-white">
-            <h5 className="mb-0">Recent Applications</h5>
+            <h5 className="mb-0">Your Applications</h5>
           </div>
           <div className="card-body">
-            {recentApplications.length === 0 ? (
+            {applications.length === 0 ? (
               <p>No applications submitted yet.</p>
             ) : (
-              <div className="table-responsive">
-                <table className="table table-hover align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Job Position</th>
-                      <th>Location</th>
-                      <th>Job Type</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentApplications.map((app) => (
-                      <tr key={app.id}>
-                        <td>{jobDetails[app.jobId]?.position || 'Loading...'}</td>
-                        <td>{jobDetails[app.jobId]?.location || 'Loading...'}</td>
-                        <td>{jobDetails[app.jobId]?.jobType || 'Loading...'}</td>
-                        <td>{app.status}</td>
-                        <td>
-                          <button className="btn btn-outline-info btn-sm" onClick={() => handleViewApplication(app.id)}>
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="row g-4">
+                {applications.map((app) => (
+                  <div key={app.id} className="col-md-6 col-lg-4">
+                    <div
+                      className="card shadow-lg border-0 h-100 animate__animated animate__fadeInUp"
+                      style={{ borderRadius: '12px' }}
+                    >
+                      <div className="card-body p-4">
+                        <h5 className="card-title text-primary">
+                          <FaFileAlt className="me-2" /> {jobDetails[app.jobId]?.position || 'Loading...'}
+                        </h5>
+                        <p className="text-muted mb-2">Location: {jobDetails[app.jobId]?.location || 'Loading...'}</p>
+                        <p className="mb-2">Job Type: {jobDetails[app.jobId]?.jobType || 'Loading...'}</p>
+                        <p className="mb-2">Status: {app.status}</p>
+                        <button
+                          className="btn btn-outline-info btn-sm"
+                          onClick={() => handleViewApplication(app.id)}
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-            <a href="/candidate-applications" className="btn btn-link mt-2">View All Applications</a>
+            <a href="/candapplications" className="btn btn-link mt-2">View All Applications</a>
           </div>
         </div>
 

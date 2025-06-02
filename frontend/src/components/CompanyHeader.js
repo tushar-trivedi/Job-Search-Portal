@@ -22,7 +22,7 @@ function CompanyHeader() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top w-100" style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
       <div className="container-fluid">
-        <NavLink className="navbar-brand fw-bold" to="/">Company Portal</NavLink>
+        <NavLink className="navbar-brand fw-bold" to="/chome">Company Portal</NavLink>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span className="navbar-toggler-icon"></span>
         </button>

@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import CandidateHeader from './candidate/CandidateHeader';
+import { FaBuilding, FaBriefcase, FaSearch, FaFilter } from 'react-icons/fa';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'animate.css'; // For animations
 
 function CandidateDashboard() {
   const navigate = useNavigate();
@@ -23,6 +26,11 @@ function CandidateDashboard() {
     qualification: '',
     resumeLink: '',
   });
+  const [showFilters, setShowFilters] = useState(false);
+
+  // References for scrolling
+  const filterSectionRef = useRef(null);
+  const jobsSectionRef = useRef(null);
 
   useEffect(() => {
     if (!token || !candidateId) {
@@ -31,7 +39,6 @@ function CandidateDashboard() {
       return;
     }
 
-    // Load candidate details from localStorage
     const storedCandidate = JSON.parse(localStorage.getItem('candidateDetails'));
     if (storedCandidate) {
       setCandidate(storedCandidate);
@@ -88,6 +95,10 @@ function CandidateDashboard() {
       const response = await axios.get(`${API_BASE_URL}/jobs/company/${companyId}`, axiosConfig);
       setSelectedCompanyJobs(response.data);
       setMessage('');
+      // Scroll to the jobs section after fetching jobs
+      setTimeout(() => {
+        jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100); // Small delay to ensure DOM updates
     } catch (error) {
       setMessage('Error fetching jobs: ' + (error.response?.data?.message || error.message));
       if (error.response?.status === 401) {
@@ -108,6 +119,10 @@ function CandidateDashboard() {
       );
       setSelectedCompanyJobs(response.data);
       setMessage(`Search results for position: ${searchPosition}`);
+      // Scroll to jobs section after search
+      setTimeout(() => {
+        jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     } catch (error) {
       setMessage('Error searching jobs: ' + (error.response?.data?.message || error.message));
       if (error.response?.status === 401) {
@@ -128,6 +143,10 @@ function CandidateDashboard() {
       );
       setSelectedCompanyJobs(response.data);
       setMessage(`Search results for skill: ${searchSkill}`);
+      // Scroll to jobs section after search
+      setTimeout(() => {
+        jobsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     } catch (error) {
       setMessage('Error searching jobs: ' + (error.response?.data?.message || error.message));
       if (error.response?.status === 401) {
@@ -154,43 +173,6 @@ function CandidateDashboard() {
     setApplyFormData({ ...applyFormData, [name]: value });
   };
 
-  // Kept for updating applications or other purposes
-  const handleApplySubmit = async (e) => {
-    e.preventDefault();
-    if (!applyFormData.candidateId || !applyFormData.qualification || !applyFormData.resumeLink) {
-      setMessage('Error: All fields are required.');
-      return;
-    }
-    const payload = {
-      candidateId: applyFormData.candidateId,
-      jobId: applyingJob.id,
-      qualification: applyFormData.qualification,
-      resumeLink: applyFormData.resumeLink,
-      status: 'Applied',
-    };
-    try {
-      await axios.put(`${API_BASE_URL}/job-applications`, payload, axiosConfig);
-      setMessage('Application submitted successfully!');
-      setApplyFormData({
-        candidateId: candidateId || '',
-        qualification: '',
-        resumeLink: candidate?.resumeLink || '',
-      });
-      setApplyingJob(null);
-      fetchJobApplications();
-      const modal = new window.bootstrap.Modal(document.getElementById('applyJobModal'));
-      modal.hide();
-    } catch (error) {
-      setMessage('Error submitting application: ' + (error.response?.data?.message || error.message));
-      if (error.response?.status === 401) {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('candidateId');
-        navigate('/login');
-      }
-    }
-  };
-
-  // New function for creating applications via POST
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
     if (!applyFormData.candidateId || !applyFormData.qualification || !applyFormData.resumeLink) {
@@ -198,7 +180,6 @@ function CandidateDashboard() {
       return;
     }
 
-    // Verify job status is "Not Applied"
     const application = jobApplications.find(
       (app) => app.jobId === applyingJob.id && app.candidateId === candidateId
     );
@@ -275,163 +256,172 @@ function CandidateDashboard() {
     }
   };
 
-  // Client-side location filter
   const filteredJobs = locationFilter
     ? selectedCompanyJobs.filter((job) =>
         job.location.toLowerCase().includes(locationFilter.toLowerCase())
       )
     : selectedCompanyJobs;
 
+  const handleFilterToggle = () => {
+    setShowFilters(!showFilters);
+    // Scroll to filter section
+    setTimeout(() => {
+      filterSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
   return (
     <div>
       <CandidateHeader />
       <div className="container py-5">
-        <h2 className="text-center mb-4 fw-bold">Candidate Dashboard</h2>
+        <h2 className="text-center mb-4 fw-bold animate__animated animate__fadeInDown">
+          Candidate Dashboard
+        </h2>
         {message && (
-          <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`}>
+          <div
+            className={`alert ${
+              message.includes('Error') ? 'alert-danger' : 'alert-success'
+            } animate__animated animate__fadeIn`}
+            style={{ borderRadius: '8px' }}
+          >
             {message}
           </div>
         )}
 
-        {/* Companies List */}
-        <div className="card shadow-lg mb-4">
-          <div className="card-header bg-dark text-white">
-            <h4>Companies</h4>
+        {/* Collapsible Search and Filter Section */}
+        <div className="card shadow-lg mb-4" ref={filterSectionRef}>
+          <div
+            className="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            style={{ cursor: 'pointer' }}
+            onClick={handleFilterToggle}
+          >
+            <h4 className="mb-0">
+              <FaFilter className="me-2" /> Search & Filter Jobs
+            </h4>
+            <i className={`bi ${showFilters ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
           </div>
-          <div className="card-body">
-            {companies.length === 0 ? (
-              <p>No companies found.</p>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-striped table-hover">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>Location</th>
-                      <th>Description</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {companies.map((company) => (
-                      <tr key={company.id}>
-                        <td>{company.name}</td>
-                        <td>{company.location}</td>
-                        <td>{company.description}</td>
-                        <td>
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => fetchCompanyJobs(company.id)}
-                          >
-                            View Jobs
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Job Search and Filter */}
-        <div className="card shadow-lg mb-4">
-          <div className="card-header bg-primary text-white">
-            <h4>Search Jobs</h4>
-          </div>
-          <div className="card-body">
-            <div className="row g-3">
-              <div className="col-md-6">
-                <form onSubmit={handleSearchPosition}>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search by position (e.g., Software Engineer)"
-                      value={searchPosition}
-                      onChange={(e) => setSearchPosition(e.target.value)}
-                    />
-                    <button className="btn btn-primary" type="submit">
-                      Search
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div className="col-md-6">
-                <form onSubmit={handleSearchSkill}>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search by skill (e.g., Java)"
-                      value={searchSkill}
-                      onChange={(e) => setSearchSkill(e.target.value)}
-                    />
-                    <button className="btn btn-primary" type="submit">
-                      Search
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div className="col-12">
-                <label htmlFor="locationFilter" className="form-label">
-                  Filter by Location
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="locationFilter"
-                  placeholder="e.g., San Francisco"
-                  value={locationFilter}
-                  onChange={(e) => setLocationFilter(e.target.value)}
-                />
+          {showFilters && (
+            <div className="card-body animate__animated animate__fadeIn">
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <form onSubmit={handleSearchPosition}>
+                    <div className="input-group">
+                      <span className="input-group-text bg-primary text-white">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by position (e.g., Software Engineer)"
+                        value={searchPosition}
+                        onChange={(e) => setSearchPosition(e.target.value)}
+                        style={{ borderRadius: '0 8px 8px 0', padding: '10px' }}
+                      />
+                      <button className="btn btn-primary ms-2" type="submit">
+                        Search
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <div className="col-md-6">
+                  <form onSubmit={handleSearchSkill}>
+                    <div className="input-group">
+                      <span className="input-group-text bg-primary text-white">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by skill (e.g., Java)"
+                        value={searchSkill}
+                        onChange={(e) => setSearchSkill(e.target.value)}
+                        style={{ borderRadius: '0 8px 8px 0', padding: '10px' }}
+                      />
+                      <button className="btn btn-primary ms-2" type="submit">
+                        Search
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <div className="col-12">
+                  <label htmlFor="locationFilter" className="form-label">
+                    Filter by Location
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="locationFilter"
+                    placeholder="e.g., San Francisco"
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    style={{ borderRadius: '8px', padding: '10px' }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Jobs List */}
-        <div className="card shadow-lg">
-          <div className="card-header bg-dark text-white">
-            <h4>Jobs</h4>
-          </div>
-          <div className="card-body">
-            {filteredJobs.length === 0 ? (
-              <p>No jobs found.</p>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-striped table-hover">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Position</th>
-                      <th>Location</th>
-                      <th>Experience</th>
-                      <th>Job Type</th>
-                      <th>Skills</th>
-                      <th>Description</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredJobs.map((job) => {
-                      const application = jobApplications.find(
-                        (app) => app.jobId === job.id && app.candidateId === candidateId
-                      );
-                      const status = application ? application.status : null;
-                      const applicationId = application ? application.id : null;
+        {/* Companies List in Card Format */}
+        <div className="mb-4">
+          <h3 className="mb-4 text-primary animate__animated animate__fadeInDown">Companies</h3>
+          {companies.length === 0 ? (
+            <p className="text-center text-muted">No companies found.</p>
+          ) : (
+            <div className="row g-4">
+              {companies.map((company) => (
+                <div key={company.id} className="col-md-6 col-lg-4">
+                  <div
+                    className="card shadow-lg border-0 h-100 animate__animated animate__fadeInUp"
+                    style={{ borderRadius: '12px', cursor: 'pointer' }}
+                    onClick={() => fetchCompanyJobs(company.id)}
+                  >
+                    <div className="card-body p-4">
+                      <h5 className="card-title text-primary">
+                        <FaBuilding className="me-2" /> {company.name}
+                      </h5>
+                      <p className="text-muted mb-2">Location: {company.location}</p>
+                      <p className="mb-2">Description: {company.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-                      return (
-                        <tr key={job.id}>
-                          <td>{job.position}</td>
-                          <td>{job.location}</td>
-                          <td>{job.experience}</td>
-                          <td>{job.jobType}</td>
-                          <td>{job.skills.join(', ')}</td>
-                          <td>{job.description}</td>
-                          <td>{status || 'Not Applied'}</td>
-                          <td>
+        {/* Jobs List in Card Format */}
+        {selectedCompanyJobs.length > 0 && (
+          <div className="mb-4" ref={jobsSectionRef}>
+            <h3 className="mb-4 text-primary animate__animated animate__fadeInDown">Available Jobs</h3>
+            {filteredJobs.length === 0 ? (
+              <p className="text-center text-muted">No jobs found.</p>
+            ) : (
+              <div className="row g-4">
+                {filteredJobs.map((job) => {
+                  const application = jobApplications.find(
+                    (app) => app.jobId === job.id && app.candidateId === candidateId
+                  );
+                  const status = application ? application.status : null;
+                  const applicationId = application ? application.id : null;
+
+                  return (
+                    <div key={job.id} className="col-md-6 col-lg-4">
+                      <div
+                        className="card shadow-lg border-0 h-100 animate__animated animate__fadeInUp"
+                        style={{ borderRadius: '12px' }}
+                      >
+                        <div className="card-body p-4">
+                          <h5 className="card-title text-success">
+                            <FaBriefcase className="me-2" /> {job.position}
+                          </h5>
+                          <p className="text-muted mb-2">Location: {job.location}</p>
+                          <p className="mb-2">Experience: {job.experience} years</p>
+                          <p className="mb-2">Job Type: {job.jobType}</p>
+                          <p className="mb-2">Skills: {job.skills.join(', ')}</p>
+                          <p className="mb-2">Description: {job.description}</p>
+                          <p className="mb-2">Status: {status || 'Not Applied'}</p>
+                          <div className="d-flex flex-wrap gap-2">
                             {!status && (
                               <button
                                 className="btn btn-success btn-sm"
@@ -464,17 +454,16 @@ function CandidateDashboard() {
                                 </button>
                               </>
                             )}
-                            {(status === 'Withdrawn' || status === 'Accepted') && null}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
-        </div>
+        )}
 
         {/* Apply Job Modal */}
         <div
@@ -563,6 +552,20 @@ function CandidateDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Decorative Background */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'url(https://www.transparenttextures.com/patterns/light-paper-fibers.png)',
+            opacity: 0.05,
+            zIndex: -1,
+          }}
+        ></div>
       </div>
     </div>
   );
