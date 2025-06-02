@@ -159,12 +159,12 @@ function AdminPage() {
           </div>
           <div className="card-body">
             <div className="d-flex flex-wrap gap-3">
-              <a href="/admin/companies" className="btn btn-primary">Manage Companies</a>
-              <a href="/admin/candidates" className="btn btn-success">Manage Candidates</a>
-              <a href="/admin/jobs" className="btn btn-warning">Manage Jobs</a>
-              <a href="/admin/applications" className="btn btn-info">View Applications</a>
-              <a href="/admin/history" className="btn btn-secondary">View History</a>
-              <a href="/admin/analysis" className="btn btn-danger">Analysis</a>
+              <a href="/adminCompany" className="btn btn-primary">Manage Companies</a>
+              <a href="/adminCandidate" className="btn btn-success">Manage Candidates</a>
+              <a href="/adminCompany" className="btn btn-warning">Manage Jobs</a>
+              <a href="/addAdmin" className="btn btn-info">Add Admin</a>
+              <a href="/adminAnalysis" className="btn btn-secondary">View History</a>
+              <a href="/adminAnalysis" className="btn btn-danger">Analysis</a>
             </div>
           </div>
         </div>
