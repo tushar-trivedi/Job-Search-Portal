@@ -1,7 +1,5 @@
 package com.jobsearchportal.config;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -56,11 +56,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/companies/**", "/api/jobs/**","/api/job-applications/**").hasAnyRole("CANDIDATE", "COMPANY")
-                        .requestMatchers(HttpMethod.PUT, "/api/job-applications/**").hasRole("COMPANY")
+                        .requestMatchers(HttpMethod.PUT, "/api/job-applications/**").hasAnyRole("CANDIDATE", "COMPANY")
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/job-applications/**" ,"/api/companies/**", "/api/jobs/**", "/api/candidates/**").hasAnyRole("CANDIDATE", "COMPANY")
                         .requestMatchers("/api/companies/**", "/api/jobs/**").hasRole("COMPANY")
                         .requestMatchers("/api/candidates/**", "/api/job-applications/**").hasRole("CANDIDATE")
                         .requestMatchers("/api/admins/**").hasRole("ADMIN")
-                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "CANDIDATE", "COMPANY")
                         .anyRequest().hasRole("ADMIN")
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
